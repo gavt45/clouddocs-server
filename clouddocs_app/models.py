@@ -7,13 +7,22 @@ class Protocol(models.Model):
     description = models.CharField(max_length=45)
     complains = models.CharField(max_length=45)
     diagnose = models.CharField(max_length=45)
-    comorbidities = models.CharField(max_length=45, null=True)
+    comorbidities = models.CharField(max_length=45)
     therapy_plan = models.CharField(max_length=45)
     drug_prescription = models.CharField(max_length=45)
     doctor_report = models.CharField(max_length=45)
     doctor = models.CharField(max_length=45)
     sh_dt = models.DateTimeField(auto_now=True)
     del_dt = models.DateTimeField(null=True)
+    # def get_json(self):
+    #     return {
+    #         "id": self.id,
+    #         "description": self.description,
+    #         "complains": self.complains,
+    #         "diagnose": self.diagnose,
+    #         "comorbidities": self.comorbidities,
+    #         "therapy_plan": self.therapy_plan
+    #     }
     class Meta:
         db_table = "protocols"
 
@@ -54,20 +63,28 @@ class Biomaterial(models.Model):
         db_table = "biomaterials"
 
 
+class Direction(models.Model):
+    name = models.CharField(max_length=45)
+    sh_dt = models.DateTimeField(auto_now=True)
+    del_dt = models.DateTimeField(null=True)
+    class Meta:
+        db_table = "directions"
+
+
 class Event(models.Model):
     name = models.CharField(max_length=50)
     place = models.CharField(max_length=45)
-    date = models.DateTimeField()
+    date = models.DateTimeField(null=True)
     sh_dt = models.DateTimeField(auto_now=True)
     del_dt = models.DateTimeField(null=True)
-    id_type = models.ForeignKey(EventType, on_delete=models.CASCADE)
-    id_protocol = models.ForeignKey(Protocol, default=None, on_delete=models.CASCADE)
+    id_type = models.ForeignKey(EventType, null=True, on_delete=models.CASCADE)
+    id_protocol = models.ForeignKey(Protocol, null=True, on_delete=models.CASCADE)
+    id_direction = models.ForeignKey(Direction, null=True, on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag)
     biomaterials = models.ManyToManyField(Biomaterial)
     files = models.ManyToManyField(File)
     class Meta:
         db_table = "events"
-
 
 # class EventBiomaterials(models.Model):
 #     id_event = models.ForeignKey(Event, on_delete=models.CASCADE)

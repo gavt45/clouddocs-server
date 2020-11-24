@@ -15,7 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from clouddocs_app import views
+
+handler404 = "clouddocs_app.views.handle404"
+handler500 = "clouddocs_app.views.handle500"
 
 urlpatterns = [
+    path('', views.base),
+    path('event/types', views.get_event_types),
+    path('events/', views.get_events),
     path('admin/', admin.site.urls),
 ]
