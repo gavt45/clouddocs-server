@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 """clouddocs_project URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -14,7 +16,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,re_path
 from clouddocs_app import views
 
 handler404 = "clouddocs_app.views.handle404"
@@ -22,7 +24,9 @@ handler500 = "clouddocs_app.views.handle500"
 
 urlpatterns = [
     path('', views.base),
-    path('event/types', views.get_event_types),
-    path('events/', views.get_events),
+    re_path('^event.?', views.add_event),
+    path('event/types/', views.get_event_types),
+    path('event/directions/', views.get_directions),
+    path('user/events/', views.get_events),
     path('admin/', admin.site.urls),
 ]

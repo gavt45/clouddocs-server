@@ -1,5 +1,8 @@
+# -*- coding: UTF-8 -*-
+
 from clouddocs_app.models import *
 from datetime import datetime
+
 
 def fill():
     Direction.objects.all().delete()
@@ -47,7 +50,6 @@ def fill():
         direction1.save()
         event_types.append(direction1)
 
-
     File.objects.all().delete()
     file1 = File()
     file1.name = "Анализ кала"
@@ -94,12 +96,11 @@ def fill():
     anal_izy.name = "Анализы для гастрика"
     anal_izy.place = "Инвитро"
     anal_izy.date = datetime(2020, 10, 12)
+    anal_izy.id_type = event_types[0]
+    anal_izy.id_direction = directions[5]
     anal_izy.biomaterials.add(helico_biomaterial)
     anal_izy.tags.add(tags[0])
     anal_izy.tags.add(tags[1])
     anal_izy.tags.add(tags[2])
     anal_izy.files.add(file1)
     anal_izy.save()
-
-
-
