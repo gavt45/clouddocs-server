@@ -24,7 +24,8 @@ handler500 = "clouddocs_app.views.handle500"
 
 urlpatterns = [
     path('', views.base),
-    re_path('^event.?', views.add_event),
+    re_path('^event/?$', views.add_event),
+    re_path('^event/last/?$', views.get_last_event),
     path('event/types/', views.get_event_types),
     path('event/directions/', views.get_directions),
     path('user/events/', views.get_events),

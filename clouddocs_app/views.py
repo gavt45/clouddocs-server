@@ -58,13 +58,60 @@ def get_directions(request):
     return JsonResponse(types, safe=False)
 
 
+def get_last_event(request):
+    event = models.Event.objects.last()
+    if not event:
+        return JsonResponse({"code": 1, "msg": "Database is empty!"}, safe=False)
+    
+    event_serialized = _model_to_dict(event)
+    # logger.warn("Serialized event before ops: {}".format(event_serialized))
+
+    event_serialized['date'] = event_serialized['date'].strftime("%d-%m-%Y")
+
+    # logger.warn("id type: {}".format(type(event_serialized['id_type'])))
+
+    if event_serialized['id_type'] != None:
+        event_serialized['type'] = _model_to_dict(
+            models.EventType.objects.get(id=event_serialized['id_type']))
+        del event_serialized['id_type']
+    else:
+        event_serialized['type'] = None
+
+    # if event_serialized['id_protocol'] != None:
+    #     event_serialized['protocol'] = _model_to_dict(
+    #         models.Protocol.objects.get(id=event_serialized['id_protocol']))
+    #     del event_serialized['id_protocol']
+    # else:
+    #     event_serialized['protocol'] = None
+
+    if event_serialized['id_direction'] != None:
+        event_serialized['direction'] = _model_to_dict(
+            models.Direction.objects.get(id=event_serialized['id_direction']))
+        del event_serialized['id_direction']
+    else:
+        event_serialized['direction'] = None
+
+    for i in range(len(event_serialized["tags"])):
+        event_serialized["tags"][i] = _model_to_dict(event_serialized["tags"][i])
+    # for i in range(len(event_serialized["biomaterials"])):
+    #     event_serialized["biomaterials"][i] = _model_to_dict(event_serialized["biomaterials"][i])
+    # if len(event_serialized["biomaterials"]) == 0:
+    #     event_serialized["biomaterials"] = None
+    for i in range(len(event_serialized["files"])):
+        event_serialized["files"][i] = _model_to_dict(event_serialized["files"][i])
+    # for i in range(len(event_serialized["directions"])):
+    #     event_serialized["directions"][i] = _model_to_dict(event_serialized["directions"][i])
+
+    # logger.warn("Serialized event: {}".format(event_serialized))
+    return JsonResponse(event_serialized, safe=False)
+
 def get_events(request):
     events = []
     for event in models.Event.objects.all():
-        logger.warn("del dt: {}".format(event.del_dt))
+        # logger.warn("del dt: {}".format(event.del_dt))
         if not event.del_dt:
             event_serialized = _model_to_dict(event)
-            logger.warn("Serialized event before ops: {}".format(event_serialized))
+            # logger.warn("Serialized event before ops: {}".format(event_serialized))
 
             event_serialized['date'] = event_serialized['date'].strftime("%d-%m-%Y")
 
@@ -102,7 +149,7 @@ def get_events(request):
             # for i in range(len(event_serialized["directions"])):
             #     event_serialized["directions"][i] = _model_to_dict(event_serialized["directions"][i])
 
-            logger.warn("Serialized event: {}".format(event_serialized))
+            # logger.warn("Serialized event: {}".format(event_serialized))
 
             events.append(event_serialized)
     return JsonResponse(events, safe=False)
