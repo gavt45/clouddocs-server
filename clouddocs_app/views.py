@@ -207,7 +207,7 @@ def add_event(request):
         for tag_id in req_json["tags"]:
             try: # todo remove in non MVP!!
                 new_event.tags.add(models.Tag.objects.get(id=tag_id))
-            except models.File.DoesNotExist:
+            except models.Tag.DoesNotExist:
                 new_event.tags.add(models.Tag.objects.get(name__icontains="анализы"))  # Берем анализы by default
                 break
         # for dir_id in req_json["directions"]:
