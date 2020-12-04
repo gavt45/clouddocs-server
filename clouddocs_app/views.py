@@ -61,7 +61,7 @@ def get_directions(request):
 def get_last_event(request):
     event = models.Event.objects.last()
     if not event:
-        return JsonResponse({"code": 1, "msg": "Database is empty!"}, safe=False)
+        return JsonResponse({"code": 1, "msg": "Database is empty!"}, safe=False, status=400)
     
     event_serialized = _model_to_dict(event)
     # logger.warn("Serialized event before ops: {}".format(event_serialized))
@@ -199,9 +199,17 @@ def add_event(request):
             handle500(request)
         new_event.save()
         for file_id in req_json["files"]:
-            new_event.files.add(models.File.objects.get(id=file_id))
+            try: # todo remove in non MVP!!
+                new_event.files.add(models.File.objects.get(id=file_id))
+            except models.File.DoesNotExist:
+                new_event.files.add(models.File.objects.get(name__icontains="кала")) # Берем анализ кала by default
+                break
         for tag_id in req_json["tags"]:
-            new_event.tags.add(models.Tag.objects.get(id=tag_id))
+            try: # todo remove in non MVP!!
+                new_event.tags.add(models.Tag.objects.get(id=tag_id))
+            except models.File.DoesNotExist:
+                new_event.tags.add(models.Tag.objects.get(name__icontains="анализы"))  # Берем анализы by default
+                break
         # for dir_id in req_json["directions"]:
         #     new_event.directions.add(models.Direction.objects.get(id=dir_id))
         new_event.description = req_json["description"]
